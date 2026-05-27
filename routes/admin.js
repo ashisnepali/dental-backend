@@ -19,7 +19,7 @@ const authLimiter = rateLimit({
 });
 
 // POST /api/admin/register
-router.post('/register', async (req, res) => {
+router.post('/register', authLimiter, async (req, res) => {
   try {
     const { username, password, confirmPassword } = req.body;
     if (!username || !password) {
@@ -43,7 +43,7 @@ router.post('/register', async (req, res) => {
 });
 
 // POST /api/admin/login
-router.post('/login', async (req, res) => {
+router.post('/login', authLimiter, async (req, res) => {
   try {
     const { username, password } = req.body;
     if (!username || !password) {

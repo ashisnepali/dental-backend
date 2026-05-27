@@ -20,16 +20,13 @@ const PORT = process.env.PORT || 5000;
 // ── Connect to MongoDB then seed ──────────────────────────────
 connectDB().then(runSeeder);
 
-// ── Security (LO7) ────────────────────────────────────────────
+// ── Security  ────────────────────────────────────────────
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'cross-origin' } }));
 app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 200, message: { error: 'Too many requests' } }));
 
-// ── CORS – allow frontend origin ──────────────────────────────
+// ── CORS ──────────────────────────────────────────────────────
 app.use(cors({
-  origin: [
-    process.env.FRONTEND_URL || 'http://localhost:3000',
-    'http://127.0.0.1:3000'
-  ],
+  origin: true,
   credentials: true,
   methods: ['GET','POST','PUT','PATCH','DELETE']
 }));
@@ -60,6 +57,24 @@ app.use('/api/gallery',      require('./routes/gallery'));
 app.use('/api/testimonials', require('./routes/testimonials'));
 app.use('/api/contact',      require('./routes/contact'));
 app.use('/api/admin',        require('./routes/admin'));
+
+// ── Root ─────────────────────────────────────────────────────
+app.get('/', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Unique Dental & Implant Center API',
+    version: '2.0.0',
+    endpoints: {
+      health:       '/health',
+      appointments: '/api/appointments',
+      services:     '/api/services',
+      gallery:      '/api/gallery',
+      testimonials: '/api/testimonials',
+      contact:      '/api/contact',
+      admin:        '/api/admin',
+    }
+  });
+});
 
 // ── Health Check ─────────────────────────────────────────────
 app.get('/health', (req, res) => {

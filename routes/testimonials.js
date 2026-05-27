@@ -30,7 +30,7 @@ router.post('/', async (req, res) => {
   try {
     const { patient_name, review, rating, service } = req.body;
     if (!patient_name || !review) {
-      return res.status(400).json({ error: 'Name and review are required' });
+      return res.status(400).json({ success: false, error: 'Name and review are required' });
     }
     await Testimonial.create({
       patient_name, review,
@@ -49,7 +49,7 @@ router.patch('/:id/approve', protect, async (req, res) => {
     return res.status(400).json({ success: false, error: 'Invalid testimonial ID' });
   try {
     const t = await Testimonial.findByIdAndUpdate(req.params.id, { approved: true }, { new: true });
-    if (!t) return res.status(404).json({ error: 'Testimonial not found' });
+    if (!t) return res.status(404).json({ success: false, error: 'Testimonial not found' });
     res.json({ success: true, message: 'Testimonial approved', testimonial: t });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });

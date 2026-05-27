@@ -97,12 +97,12 @@ router.patch('/:id/status', protect, async (req, res) => {
   try {
     const { status } = req.body;
     if (!VALID_STATUSES.includes(status)) {
-      return res.status(400).json({ error: 'Invalid status' });
+      return res.status(400).json({ success: false, error: 'Invalid status' });
     }
     const appointment = await Appointment.findByIdAndUpdate(
       req.params.id, { status }, { new: true }
     );
-    if (!appointment) return res.status(404).json({ error: 'Not found' });
+    if (!appointment) return res.status(404).json({ success: false, error: 'Not found' });
     res.json({ success: true, message: `Status updated to ${status}`, appointment });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
@@ -114,7 +114,7 @@ router.delete('/:id', protect, async (req, res) => {
   if (!mongoose.isValidObjectId(req.params.id)) return badId(res);
   try {
     const appointment = await Appointment.findByIdAndDelete(req.params.id);
-    if (!appointment) return res.status(404).json({ error: 'Not found' });
+    if (!appointment) return res.status(404).json({ success: false, error: 'Not found' });
     res.json({ success: true, message: 'Appointment deleted successfully' });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });

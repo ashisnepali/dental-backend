@@ -28,7 +28,11 @@ const storage = multer.diskStorage({
 
 const fileFilter = (req, file, cb) => {
   if (/image\/(jpeg|jpg|png|gif|webp)/.test(file.mimetype)) cb(null, true);
-  else cb(new Error('Only image files are allowed (jpg, png, gif, webp)'));
+  else {
+    const err = new Error('Only image files are allowed (jpg, png, gif, webp)');
+    err.status = 400;
+    cb(err);
+  }
 };
 
 const upload = multer({ storage, fileFilter, limits: { fileSize: 5 * 1024 * 1024 } });
@@ -52,7 +56,7 @@ router.get('/', async (req, res) => {
 // POST /api/gallery  (admin – upload image)
 router.post('/', protect, upload.single('image'), async (req, res) => {
   try {
-    if (!req.file) return res.status(400).json({ error: 'No image uploaded' });
+    if (!req.file) return res.status(400).json({ success: false, error: 'No image uploaded' });
     const image_path = `/uploads/${req.file.filename}`;
     const gallery = await Gallery.create({
       title:       req.body.title       || 'Gallery Image',

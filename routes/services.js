@@ -43,7 +43,7 @@ router.get('/:id', async (req, res) => {
 router.post('/', protect, async (req, res) => {
   try {
     const { name, description, price_from, price_to, duration, icon, category } = req.body;
-    if (!name) return res.status(400).json({ error: 'Service name required' });
+    if (!name) return res.status(400).json({ success: false, error: 'Service name required' });
     const service = await Service.create({ name, description, price_from, price_to, duration, icon, category });
     res.status(201).json({ success: true, service });
   } catch (err) {
@@ -62,7 +62,7 @@ router.put('/:id', protect, async (req, res) => {
     Object.keys(updates).forEach(k => updates[k] === undefined && delete updates[k]);
 
     const service = await Service.findByIdAndUpdate(req.params.id, updates, { new: true, runValidators: true });
-    if (!service) return res.status(404).json({ error: 'Service not found' });
+    if (!service) return res.status(404).json({ success: false, error: 'Service not found' });
     res.json({ success: true, service });
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });
